@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Job Portal</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+
+    #jobs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    button {
+      margin-top: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Job Portal</h2>
+
+<input type="text" id="search" placeholder="Search jobs...">
+
+<select id="companyFilter">
+  <option value="">All Companies</option>
+  <option value="TCS">TCS</option>
+  <option value="Infosys">Infosys</option>
+</select>
+
+<div id="jobs"></div>
+
+<h3>Saved Jobs</h3>
+<div id="savedJobs"></div>
+
+<script>
+  let jobs = [
+    { title: "Developer", company: "TCS", salary: "5 LPA", location: "Chennai" },
+    { title: "Designer", company: "Infosys", salary: "4 LPA", location: "Bangalore" }
+  ];
+
+  let saved = [];
+
+  function displayJobs(data) {
+    const container = document.getElementById("jobs");
+    container.innerHTML = "";
+
+    data.forEach(job => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <h4>${job.title}</h4>
+        <p>${job.company}</p>
+        <p>${job.salary}</p>
+        <p>${job.location}</p>
+        <button onclick='saveJob("${job.title}")'>Save</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function saveJob(title) {
+    const job = jobs.find(j => j.title === title);
+    if (job && !saved.includes(job)) {
+      saved.push(job);
+      displaySaved();
+    }
+  }
+
+  function displaySaved() {
+    const container = document.getElementById("savedJobs");
+    container.innerHTML = saved.map(j => `<p>${j.title} - ${j.company}</p>`).join("");
+  }
+
+  // 🔍 Search + Filter
+  document.getElementById("search").addEventListener("input", filterJobs);
+  document.getElementById("companyFilter").addEventListener("change", filterJobs);
+
+  function filterJobs() {
+    const search = document.getElementById("search").value.toLowerCase();
+    const company = document.getElementById("companyFilter").value;
+
+    let filtered = jobs.filter(j =>
+      j.title.toLowerCase().includes(search) &&
+      (company === "" || j.company === company)
+    );
+
+    displayJobs(filtered);
+  }
+
+  displayJobs(jobs);
+</script>
+
+</body>
+</html>
